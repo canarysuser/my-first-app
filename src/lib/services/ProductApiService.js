@@ -21,7 +21,6 @@ export function getProductById(id) {
 }
 
 export async function upsertProduct(product) {
-   
     let headers = {
         'Content-Type': 'application/json'
     }
@@ -32,6 +31,13 @@ export async function upsertProduct(product) {
         url=`${productsUrl}/${product.productId}`;
     } else {
         let items = await getProducts();
+        //[10,20,30,40] 
+        //reduce((sum, no)=> sum + no, initialValue: 0)
+        //(sum:0, no:10) => 0 + 10 
+        //(sum:10, no:20) => 10 + 20
+        //(sum:30, no:30) => 30 + 30
+        //(sum:60, no:40) => 60 + 40
+        //returns 60;
         let lastId = items.reduce((max, item) => item.productId > max ? item.productId : max, 0);
         console.log(lastId)
         product.productId = lastId + 1; //assign a new ID
