@@ -7,6 +7,8 @@ function ProductList(props) {
     <Heading level='3' size='small' color='red' textAlign='center'>
             Product List
         </Heading>
+        <Button type='button' label='Add New Products' secondary
+            onClick={props.addNewClick} />
      <Table margin='5px'>
             <TableHeader>
                 <TableRow>

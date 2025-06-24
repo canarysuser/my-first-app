@@ -19,7 +19,8 @@ export function getProductById(id) {
 export function updateProduct(product) {
     const index = products.findIndex(p => p.productId === product.productId);
     if (index !== -1) {
-        products.splice(index, 1, product);
+       products.splice(index, 1, product);
+     
     }
     return products;
 }

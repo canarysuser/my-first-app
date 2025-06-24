@@ -7,5 +7,6 @@ export class Product {
     unitsInStock=0;
     categoryId=0;
     discontinued=false;
+    id=0;
 };
 
