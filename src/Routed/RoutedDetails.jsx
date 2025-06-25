@@ -3,27 +3,33 @@ import React, { useContext, useEffect, useState } from 'react'
 import { Navigate, useParams } from 'react-router';
 import * as apiService from '../lib/services/ProductApiService';
 import ProductContext from '../StateManagement/ProductContext';
+import { useDispatch, useSelector } from 'react-redux';
+import { productActions } from '../store/actions';
 
-function RoutedDetails() {
+ function RoutedDetails() {
+    const state = useSelector(state=>state.products);
+    const dispatch=useDispatch(); 
+
     const [model, setModel] = useState({})
     const [canNavigate, setCanNavigate] = useState(false);
     const { id } = useParams();
  //const {state, dispatch} = useContext(ProductContext);
 
-    async function fetchProductById() {
+    
+    useEffect(() => {
+   async function fetchProductById() {
         try {
             if(!id) throw new Error("Product ID is required");
-
-            let item = await apiService.getProductById(id);
-            setModel({ ...item });
+            setModel({...state.selectedItem})
+            
         } catch (error) {
-
-            console.error("Error fetching product by ID:", error);
-            alert("Failed to fetch product details. Please try again later.");
+            setCanNavigate(true);
+            // console.error("Error fetching product by ID:", error);
+            // alert("Failed to fetch product details. Please try again later.");
         }
     }
-    useEffect(() => {
-        fetchProductById();
+    fetchProductById();
+            
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
@@ -32,6 +38,7 @@ function RoutedDetails() {
         setCanNavigate(true);
     }
     const handleChange = (event) => {
+
     }
     if(canNavigate) {
         return <Navigate to={`/routed/list`} replace={true} />
@@ -54,19 +61,19 @@ function RoutedDetails() {
                 color='red' >
                 <FormField label='Product Name'
                     name='productName'
-                    value={model?.productName || ''}
+                    value={model.productName || ''}
                     onChange={handleChange}
                     required
                 />
                 <FormField label='Stock'
                     name='unitsInStock'
-                    value={model?.unitsInStock || 0}
+                    value={model.unitsInStock || 0}
                     onChange={handleChange}
                     min={1}
                     max={500}
                     required
                     validate={() => {
-                        if (model?.unitsInStock < 1 || model?.unitsInStock > 500) {
+                        if (model.unitsInStock < 1 || model.unitsInStock > 500) {
                             return 'Units in stock must be between 1 and 500';
                         }
                         return undefined;
@@ -77,7 +84,7 @@ function RoutedDetails() {
                     name='unitPrice'
                     component={RangeInput}
                     min={1} max={1000} step={10}
-                    value={model?.unitPrice || 0}
+                    value={model.unitPrice || 0}
                     onChange={handleChange}
                 />
                 <Text size='xsmall' color='dark-1'>{model?.unitPrice || 0}</Text>

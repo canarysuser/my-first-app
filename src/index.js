@@ -6,10 +6,12 @@ import { BrowserRouter } from 'react-router';
 //import {legacy_createStore} from "redux"
 import { Provider } from "react-redux"
 import storeConfig from './store/store-config';
+import store from './store/store-rtk-config';
 
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
-const store = storeConfig();
+//const store = storeConfig();
+
 
 root.render(
   <React.StrictMode>
@@ -20,7 +22,7 @@ root.render(
     </Provider>
   </React.StrictMode>
 );
-//console.log(store.getState());
+console.log(store.getState());
 // If you want to start measuring performance in your app, pass a function
 // to log results (for example: reportWebVitals(console.log))
 // or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals

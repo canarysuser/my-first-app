@@ -30,14 +30,31 @@ export const ProductReducer = (state, action) => {
             return { 
                 ...state,
                 items:[], 
-                isLoading: true
+                isLoading: true,
+                loadingState: {isLoading:true, action:'All'}
             }
         case productConstants.GetAllEnd: 
             return { 
                 ...state,
                 items: action.items,
                 isLoading:false, 
-                hasError: false
+                hasError: false,
+                loadingState: {isLoading:false, action:'All'}
+            }
+            case productConstants.GetByIdBegin: 
+            return { 
+                ...state,
+                selectedIndex:action.selectedIndex, 
+                isLoading: true,
+                loadingState: {isLoading:true, action:'ById'}
+            }
+        case productConstants.GetByIdEnd: 
+            return { 
+                ...state,
+                selectedItem: action.selectedItem,
+                isLoading:false, 
+                hasError: false,
+                loadingState: {isLoading:false, action:'ById'}
             }
         default: 
             return state;

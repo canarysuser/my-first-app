@@ -11,12 +11,21 @@ const productInitialState = {
     selectedItem: {},
     selectedIndex:0,
     isLoading: false,
+    loadingState: {isLoading:false, action:'All'},
     hasError: false
 }
 const GetAllBegin = 'BeginGetAll',
-      GetAllEnd='EndGetAll'; 
+      GetAllEnd='EndGetAll',
+      GetByIdBegin="BeginGetById",
+      GetByIdEnd='EndGetById'; 
 
-export const productConstants= {GetAllBegin, GetAllEnd, productInitialState};
+export const productConstants= {
+    GetAllBegin, 
+    GetAllEnd, 
+    GetByIdBegin,
+    GetByIdEnd,
+    productInitialState
+};
 
 export const errorInitialState = { 
     hasError: false, 

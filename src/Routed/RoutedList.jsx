@@ -7,19 +7,22 @@ import {
     Spinner,
     Text
 } from 'grommet'
-import { useNavigate } from 'react-router-dom'
+import { Navigate, useNavigate } from 'react-router-dom'
 import * as service from '../lib/services/ProductApiService';
 import ProductContext, { allProductsAction } from '../StateManagement/ProductContext';
 import { productActions } from '../store/actions';
 import { useDispatch, useSelector } from 'react-redux';
+import { getAllBeginActionCreator, getAllEndActionCreator } from '../store/store-rtk-config';
 //import routes from '../lib/AppRoutes';
 
 function RoutedList() {
     //const {state, dispatch} = useContext(ProductContext);
     const state = useSelector(state=>state.products);
+    
     const dispatch = useDispatch();
     const [productListState, setProductListState] = React.useState([])
     const navigate = useNavigate();
+
     useEffect(() => {
         // Simulating an API call to fetch product data
         const fetchProducts = async () => {
@@ -30,24 +33,30 @@ function RoutedList() {
                 //const response = await service.getProducts();
                // dispatch(allProductsAction(response));
                // }
-                var list =await productActions.getAllProducts(dispatch);
-                console.log(list);
+                //var list =await productActions.getAllProducts(dispatch);
+                //console.log(list);
 
-                setProductListState(list);
+                //setProductListState(list);
+
+                //WITH RTK Config 
+                dispatch(getAllBeginActionCreator({}));
+                var list = await service.getProducts();
+                dispatch(getAllEndActionCreator({items: list}))
+
             } catch (error) {
-                console.error("Error fetching products:", error);
+               // console.error("Error fetching products:", error);
+                navigate('/error')
             }
         };
         fetchProducts();
     }, []);
-    if(state.isLoading) { 
-        return <Spinner color='black' message='Loading data' size='xlarge'
-            />
-    }
 
-    const handleView = (productId) => {
-        // var route = routes.find(r=>r.name=="routedlist");
-        // navigate(`${route.path}/${productId}`, { replace: true });
+    if(state.loadingState.isLoading && state.loadingState.action=='All') { 
+        //if(state.loadingState.isLoading && state.loadingState.action=='All')
+            return <Spinner color='black' message='Loading data' size='xlarge' />
+    }
+    const handleView = async (productId) => {
+        await productActions.getByIdProducts(dispatch, productId);
         navigate(`/routed/details/${productId}`);
     }
     return (
