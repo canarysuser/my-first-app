@@ -1,34 +1,51 @@
-import { Box, Button, CheckBox, Form, FormField, Heading, RangeInput, Text } from 'grommet'
-import React, { useEffect } from 'react'
+import { Box, CheckBox, Form, FormField, Heading, Text, Button, RangeInput } from 'grommet'
+import React, { useContext, useEffect, useState } from 'react'
+import { Navigate, useParams } from 'react-router';
+import * as apiService from '../lib/services/ProductApiService';
+import ProductContext from '../StateManagement/ProductContext';
 
-function ProductDetails(props) {
-    const [model, setModel] = React.useState({ ...props.selectedProduct });
-    const handleChange = (event) => {
-        event.preventDefault();
-        setModel({
-            ...model,
-            [event.target.name]: event.target.value
-        });
-    }
-    //runs immediately after the component is rendered for the first time
-    // or re-rendered subsequently.
-    useEffect(() => {
-        if (model && model.productId !== props.selectedProduct?.productId) {
-            setModel({ ...props.selectedProduct });
+function RoutedDetails() {
+    const [model, setModel] = useState({})
+    const [canNavigate, setCanNavigate] = useState(false);
+    const { id } = useParams();
+ //const {state, dispatch} = useContext(ProductContext);
+
+    async function fetchProductById() {
+        try {
+            if(!id) throw new Error("Product ID is required");
+
+            let item = await apiService.getProductById(id);
+            setModel({ ...item });
+        } catch (error) {
+
+            console.error("Error fetching product by ID:", error);
+            alert("Failed to fetch product details. Please try again later.");
         }
-    }, [props.selectedProduct]);
+    }
+    useEffect(() => {
+        fetchProductById();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
 
     const formSubmit = (e) => {
-        props.setErrorMessage("An error occurred while submitting the form.");
-        e.preventDefault();
-        console.log("Form submitted with data: ", model);
-        props.onSubmit(model);
+        e.preventDefault(); 
+        setCanNavigate(true);
     }
+    const handleChange = (event) => {
+    }
+    if(canNavigate) {
+        return <Navigate to={`/routed/list`} replace={true} />
+    }
+   // console.log(state.items);
     return (
-        <>
-            <Heading level='3' size='small' color='red' textAlign='center'>
+        <div>
+            <Heading level='2' style={{ backgroundColor: 'black' }} color='yellow' textAlign='center'>
                 Product Details
             </Heading>
+            <Text color='blue' size='large' textAlign='center'>
+                Routed Values are: {id}
+            </Text>
+            <Box direction='row' align='center' gap='large' justify='center'>
             <Form onSubmit={formSubmit} noValidate
                 messages={{
                     required: 'This field is required'
@@ -39,17 +56,16 @@ function ProductDetails(props) {
                     name='productName'
                     value={model?.productName || ''}
                     onChange={handleChange}
-                    readOnly={!props.isInEditMode}
                     required
                 />
                 <FormField label='Stock'
                     name='unitsInStock'
                     value={model?.unitsInStock || 0}
                     onChange={handleChange}
-                    min={1} 
+                    min={1}
                     max={500}
                     required
-                    validate={()=>{
+                    validate={() => {
                         if (model?.unitsInStock < 1 || model?.unitsInStock > 500) {
                             return 'Units in stock must be between 1 and 500';
                         }
@@ -78,8 +94,9 @@ function ProductDetails(props) {
                 </Box>
 
             </Form>
-        </>
+            </Box>
+        </div>
     )
 }
 
-export default ProductDetails
+export default RoutedDetails

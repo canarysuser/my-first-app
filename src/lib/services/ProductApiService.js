@@ -55,3 +55,14 @@ export async function upsertProduct(product) {
     let data= await response.json();
     return data;
 }
+export async function deleteProduct(id) {
+    let response = await fetch(`${productsUrl}/${id}`, {
+        method: 'DELETE'
+    });
+    if (!response.ok) {
+        throw new Error("Network response was not ok " + response.statusText);
+    }
+    let data = await response.json();
+    console.log("Product deleted: ", data);
+    return data;
+}
